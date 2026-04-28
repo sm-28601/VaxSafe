@@ -2,12 +2,14 @@
 
 **Cold Chain Intelligence Platform**
 
-VaxSafe is a comprehensive vaccine cold chain logistics platform designed to ensure vaccines are transported and stored within safe temperature ranges (2–8°C). The platform provides real-time monitoring, digital twin simulation, RL-powered route optimization, anomaly detection, and an immutable blockchain audit trail. 
+VaxSafe is a self-healing, trust-aware cold chain intelligence platform that predicts disruptions and dynamically reconfigures vaccine delivery routes to prevent spoilage and delays.
+
+VaxSafe is a comprehensive vaccine cold chain logistics platform designed to ensure vaccines are transported and stored within safe temperature ranges (2–8°C). The platform provides real-time monitoring, digital twin simulation, route optimization, anomaly detection, and an immutable blockchain audit trail.
 
 This repository contains the interactive frontend web application, built as a robust demonstration of the platform's capabilities across six deployment phases from foundational simulation to market-readiness.
 
 ## ✨ Key Features
-
+- **Adaptive Intelligence Layer:** Combines anomaly detection and route optimization to detect disruptions, evaluate node reliability (trust), and dynamically reroute shipments to maintain cold chain integrity.
 - **Command Center Dashboard:** An interactive overview of the entire operation featuring KPI scorecards, live temperature streams, and multi-dimensional reliability tracking.
 - **Digital Twin Simulation:** Interactive SVG network graph of 25 cold chain nodes visualizing route flows, node capacities, and simulated status disruptions.
 - **Route Optimizer:** Compare legacy routes with RL-optimized paths directly on a Leaflet map, visualizing predicted improvements in transit times and risk reduction.
