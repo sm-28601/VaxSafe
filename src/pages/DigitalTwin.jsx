@@ -66,7 +66,7 @@ export default function DigitalTwin() {
             <Zap size={14} /> Inject Disruption
           </button>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 16, fontSize: '0.75rem', color: '#94a3b8' }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 16, fontSize: '0.75rem', color: '#64748b' }}>
             {Object.entries(nodeTypes).map(([key, val]) => (
               <span key={key} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: val.color }} />
@@ -87,7 +87,7 @@ export default function DigitalTwin() {
                 key={i}
                 x1={e.from.x} y1={e.from.y}
                 x2={e.to.x} y2={e.to.y}
-                stroke={e.status === 'critical' ? '#ef4444' : e.status === 'at-risk' ? '#f59e0b' : 'rgba(255,255,255,0.1)'}
+                stroke={e.status === 'critical' ? '#ef4444' : e.status === 'at-risk' ? '#f59e0b' : '#cbd5e1'}
                 strokeWidth={e.status === 'active' ? 1.5 : 2}
                 strokeDasharray={e.status === 'critical' ? '4 4' : 'none'}
               />
@@ -129,7 +129,7 @@ export default function DigitalTwin() {
                   className="twin-node-circle"
                   style={{
                     borderColor: isSelected ? '#fff' : typeInfo.color,
-                    background: isSelected ? typeInfo.color : 'rgba(17,17,40,0.9)',
+                    background: isSelected ? typeInfo.color : '#ffffff',
                     boxShadow: isSelected ? `0 0 20px ${typeInfo.color}50` : 'none',
                     transform: isSelected ? 'scale(1.2)' : 'scale(1)',
                   }}
@@ -165,9 +165,9 @@ export default function DigitalTwin() {
                   ['Safe Range', `${selected.tempRange[0]}–${selected.tempRange[1]}°C`],
                   ['Current Temp', `${selected.currentTemp}°C`],
                 ].map(([label, value]) => (
-                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.82rem' }}>
-                    <span style={{ color: '#64748b' }}>{label}</span>
-                    <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{value}</span>
+                  <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.82rem' }}>
+                    <span style={{ color: '#94a3b8' }}>{label}</span>
+                    <span style={{ color: '#1e293b', fontWeight: 600 }}>{value}</span>
                   </div>
                 ))}
               </div>

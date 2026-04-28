@@ -92,10 +92,10 @@ export default function AnomalyDetection() {
           <div className="card-body">
             <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="hour" tick={{ fontSize: 9, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 9, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ background: '#111128', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: '0.75rem' }} />
+                <Tooltip contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: '0.75rem' }} />
                 <Area type="monotone" dataKey="predicted" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.08} strokeWidth={1.5} strokeDasharray="4 4" name="Predicted" />
                 <Area type="monotone" dataKey="count" stroke="#6366f1" fill="#6366f1" fillOpacity={0.15} strokeWidth={2} name="Actual" />
               </AreaChart>
@@ -122,8 +122,8 @@ export default function AnomalyDetection() {
               {methodDist.map((m, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ width: 10, height: 10, borderRadius: '50%', background: m.fill, flexShrink: 0 }} />
-                  <span style={{ flex: 1, fontSize: '0.78rem', color: '#94a3b8' }}>{m.name}</span>
-                  <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#e2e8f0' }}>{m.value}</span>
+                  <span style={{ flex: 1, fontSize: '0.78rem', color: '#64748b' }}>{m.name}</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1e293b' }}>{m.value}</span>
                 </div>
               ))}
             </div>
@@ -142,7 +142,7 @@ export default function AnomalyDetection() {
                 placeholder="Search alerts..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                style={{ background: 'none', border: 'none', outline: 'none', color: '#e2e8f0', fontSize: '0.78rem', width: '100%' }}
+                style={{ background: 'none', border: 'none', outline: 'none', color: '#1e293b', fontSize: '0.78rem', width: '100%' }}
               />
             </div>
             <div className="tabs">
@@ -174,7 +174,7 @@ export default function AnomalyDetection() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span>{a.icon}</span>
                       <div>
-                        <div style={{ fontWeight: 600, color: '#e2e8f0', fontSize: '0.82rem' }}>{a.label}</div>
+                        <div style={{ fontWeight: 600, color: '#1e293b', fontSize: '0.82rem' }}>{a.label}</div>
                         {a.tempReading && <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{a.tempReading}°C</div>}
                       </div>
                     </div>

@@ -89,15 +89,15 @@ export default function FleetMonitor() {
                       onClick={() => setSelectedVehicle(selectedVehicle === v.id ? null : v.id)}
                       style={{
                         cursor: 'pointer',
-                        background: selectedVehicle === v.id ? 'rgba(99,102,241,0.08)' : undefined,
+                        background: selectedVehicle === v.id ? 'rgba(79,70,229,0.05)' : undefined,
                       }}
                     >
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <Truck size={14} color={color} />
                           <div>
-                            <div style={{ fontWeight: 600, color: '#e2e8f0' }}>{v.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{v.driver}</div>
+                            <div style={{ fontWeight: 600, color: '#1e293b' }}>{v.name}</div>
+                            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{v.driver}</div>
                           </div>
                         </div>
                       </td>
@@ -123,7 +123,7 @@ export default function FleetMonitor() {
                         </div>
                       </td>
                       <td>
-                        <div style={{ width: 80, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.07)', overflow: 'hidden' }}>
+                        <div style={{ width: 80, height: 6, borderRadius: 3, background: '#f1f5f9', overflow: 'hidden' }}>
                           <div style={{ width: `${v.progress}%`, height: '100%', borderRadius: 3, background: '#6366f1', transition: 'width 0.5s ease' }} />
                         </div>
                       </td>
@@ -152,7 +152,7 @@ export default function FleetMonitor() {
                 <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginBottom: 8 }}>Temperature History</div>
                 <ResponsiveContainer width="100%" height={120}>
                   <LineChart data={selectedHistory}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="time" tick={{ fontSize: 8, fill: '#64748b' }} axisLine={false} tickLine={false} />
                     <YAxis domain={[0, 12]} tick={{ fontSize: 8, fill: '#64748b' }} axisLine={false} tickLine={false} />
                     <ReferenceLine y={2} stroke="#f59e0b" strokeDasharray="3 3" strokeOpacity={0.3} />
@@ -173,9 +173,9 @@ export default function FleetMonitor() {
                   ['Progress', `${Math.round(selected.progress)}%`],
                   ['Last Update', timeAgo(selected.lastUpdate)],
                 ].map(([k, v]) => (
-                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                    <span style={{ color: '#64748b' }}>{k}</span>
-                    <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{v}</span>
+                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', padding: '4px 0', borderBottom: '1px solid #f1f5f9' }}>
+                    <span style={{ color: '#94a3b8' }}>{k}</span>
+                    <span style={{ color: '#1e293b', fontWeight: 600 }}>{v}</span>
                   </div>
                 ))}
               </div>

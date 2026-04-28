@@ -61,7 +61,7 @@ export default function DriverApp() {
               }}
             />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: '0.65rem', color: '#64748b' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, fontSize: '0.65rem', color: '#94a3b8' }}>
             <span>0°C</span>
             <span style={{ color: '#10b981' }}>Safe: 2–8°C</span>
             <span>12°C</span>
@@ -82,12 +82,12 @@ export default function DriverApp() {
           { icon: <AlertTriangle size={16} />, label: 'Alerts', value: '0', color: '#f59e0b' },
         ].map((s, i) => (
           <div key={i} className="driver-card" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 14 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: `${s.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>
               {s.icon}
             </div>
             <div>
-              <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{s.label}</div>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#e2e8f0' }}>{s.value}</div>
+              <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{s.label}</div>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#1e293b' }}>{s.value}</div>
             </div>
           </div>
         ))}
@@ -95,7 +95,7 @@ export default function DriverApp() {
 
       {/* Route Stops */}
       <div className="driver-card">
-        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#e2e8f0', marginBottom: 16 }}>
+        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b', marginBottom: 16 }}>
           <MapPin size={14} style={{ display: 'inline', marginRight: 6 }} />
           Route Progress
         </div>
@@ -112,10 +112,10 @@ export default function DriverApp() {
                 }}
               />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: stop.status === 'upcoming' ? '#64748b' : '#e2e8f0' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: stop.status === 'upcoming' ? '#94a3b8' : '#1e293b' }}>
                   {stop.name}
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b', display: 'flex', gap: 12, marginTop: 2 }}>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8', display: 'flex', gap: 12, marginTop: 2 }}>
                   <span>{stop.time}</span>
                   <span>{stop.temp}</span>
                 </div>
@@ -130,7 +130,7 @@ export default function DriverApp() {
 
       {/* Checklist */}
       <div className="driver-card">
-        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#e2e8f0', marginBottom: 16 }}>
+        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#1e293b', marginBottom: 16 }}>
           Delivery Checklist
         </div>
         {checklist.map(item => (
@@ -139,7 +139,7 @@ export default function DriverApp() {
             onClick={() => toggleCheck(item.id)}
             style={{
               display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0',
-              borderBottom: '1px solid rgba(255,255,255,0.05)', cursor: 'pointer',
+              borderBottom: '1px solid #f1f5f9', cursor: 'pointer',
             }}
           >
             <div style={{
@@ -153,7 +153,7 @@ export default function DriverApp() {
             </div>
             <span style={{
               fontSize: '0.82rem',
-              color: item.done ? '#64748b' : '#e2e8f0',
+              color: item.done ? '#94a3b8' : '#1e293b',
               textDecoration: item.done ? 'line-through' : 'none',
             }}>
               {item.label}

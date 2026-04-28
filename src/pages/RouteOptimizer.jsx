@@ -144,15 +144,15 @@ export default function RouteOptimizer() {
                     padding: '10px 8px',
                     borderRadius: 8,
                     cursor: 'pointer',
-                    background: selectedRoute?.id === r.id ? 'rgba(99,102,241,0.12)' : 'transparent',
+                    background: selectedRoute?.id === r.id ? 'rgba(79,70,229,0.06)' : 'transparent',
                     borderLeft: `3px solid ${routeStatusColors[r.status]}`,
                     marginBottom: 4,
                     transition: 'all 0.15s ease',
                   }}
                 >
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e2e8f0' }}>{r.name}</div>
-                    <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{r.distance}km · {formatDuration(r.estTime)}</div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1e293b' }}>{r.name}</div>
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{r.distance}km · {formatDuration(r.estTime)}</div>
                   </div>
                   <span className={`badge badge-${r.status === 'active' ? 'success' : r.status === 'at-risk' ? 'warning' : 'danger'}`}>
                     {r.status}
@@ -177,12 +177,12 @@ export default function RouteOptimizer() {
                     { icon: <AlertTriangle size={14} />, label: 'Risk Reduction', value: `${savings.risk}%`, color: '#10b981' },
                     { icon: <Zap size={14} />, label: 'Reroute Latency', value: '< 3.2 sec', color: '#f59e0b' },
                   ].map((s, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ width: 28, height: 28, borderRadius: 6, background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 6, background: `${s.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>
                         {s.icon}
                       </div>
-                      <span style={{ flex: 1, fontSize: '0.8rem', color: '#94a3b8' }}>{s.label}</span>
-                      <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#e2e8f0' }}>{s.value}</span>
+                      <span style={{ flex: 1, fontSize: '0.8rem', color: '#64748b' }}>{s.label}</span>
+                      <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#1e293b' }}>{s.value}</span>
                     </div>
                   ))}
                 </div>

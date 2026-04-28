@@ -157,7 +157,7 @@ export default function Roadmap() {
               </div>
 
               {/* Gate */}
-              <div style={{ marginTop: 16, padding: '12px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ marginTop: 16, padding: '12px 16px', background: 'rgba(0,0,0,0.02)', borderRadius: 10, border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                   <Target size={14} color={phase.color} />
                   <span style={{ fontSize: '0.75rem', fontWeight: 700, color: phase.color }}>Gate {phase.id} Criterion</span>
@@ -204,12 +204,12 @@ export default function Roadmap() {
       <div style={{ textAlign: 'center', padding: '32px 0' }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 12, padding: '16px 32px',
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.15), rgba(6,182,212,0.15))',
-          border: '1px solid rgba(99,102,241,0.3)', borderRadius: 16,
+          background: 'linear-gradient(135deg, rgba(79,70,229,0.06), rgba(8,145,178,0.06))',
+          border: '1px solid rgba(79,70,229,0.15)', borderRadius: 16,
         }}>
           <span style={{ fontSize: '1.8rem' }}>🚀</span>
           <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#e2e8f0' }}>MARKET-READY PRODUCT</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1e293b' }}>MARKET-READY PRODUCT</div>
             <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
               Recurring revenue from ≥3 enterprise customers · Path to 100+ routes/month
             </div>

@@ -129,13 +129,13 @@ export default function Dashboard() {
           <div className="card-body">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={routeComparison} barGap={2}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    background: '#111128',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
                     borderRadius: 8,
                     fontSize: '0.75rem',
                   }}
@@ -169,12 +169,12 @@ export default function Dashboard() {
                 { label: 'Cost Savings (monthly)', value: formatCurrency(kpis.costSavings), icon: <DollarSign size={16} />, color: '#f59e0b' },
                 { label: 'Weekly Excursions', value: kpis.excursionsWeek, icon: <AlertTriangle size={16} />, color: '#ef4444' },
               ].map((m, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 8, background: `${m.color}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: m.color }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: `${m.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: m.color }}>
                     {m.icon}
                   </div>
-                  <span style={{ flex: 1, fontSize: '0.82rem', color: '#94a3b8' }}>{m.label}</span>
-                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#e2e8f0' }}>{m.value}</span>
+                  <span style={{ flex: 1, fontSize: '0.82rem', color: '#64748b' }}>{m.label}</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b' }}>{m.value}</span>
                 </div>
               ))}
             </div>

@@ -37,10 +37,10 @@ export default function PhaseProgress() {
               ) : (
                 <Circle size={16} color="#64748b" />
               )}
-              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: p.status === 'upcoming' ? '#64748b' : '#e2e8f0' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 600, color: p.status === 'upcoming' ? '#94a3b8' : '#1e293b' }}>
                 Phase {p.id}: {p.name}
               </span>
-              <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#64748b' }}>
+              <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#94a3b8' }}>
                 Weeks {p.weeks}
               </span>
             </div>

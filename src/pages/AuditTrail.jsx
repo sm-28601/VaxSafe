@@ -86,8 +86,8 @@ export default function AuditTrail() {
                   onClick={() => setSelectedBlock(selectedBlock === block.id ? null : block.id)}
                   style={{
                     cursor: 'pointer',
-                    background: selectedBlock === block.id ? 'rgba(99,102,241,0.08)' : undefined,
-                    borderColor: selectedBlock === block.id ? 'rgba(99,102,241,0.3)' : undefined,
+                    background: selectedBlock === block.id ? 'rgba(79,70,229,0.05)' : undefined,
+                    borderColor: selectedBlock === block.id ? 'rgba(79,70,229,0.2)' : undefined,
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -95,12 +95,12 @@ export default function AuditTrail() {
                       <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6366f1' }}>Block #{block.id}</span>
                       {block.verified && <CheckCircle size={12} color="#10b981" />}
                     </div>
-                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                    <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
                       {new Date(block.timestamp).toLocaleTimeString()}
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e2e8f0' }}>{block.action}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1e293b' }}>{block.action}</span>
                     <span className="badge badge-neutral">{block.vehicle}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -138,22 +138,22 @@ export default function AuditTrail() {
                 ['Latitude', selected.data.lat],
                 ['Longitude', selected.data.lng],
               ].map(([k, v]) => (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.82rem' }}>
-                  <span style={{ color: '#64748b' }}>{k}</span>
-                  <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{v}</span>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.82rem' }}>
+                  <span style={{ color: '#94a3b8' }}>{k}</span>
+                  <span style={{ color: '#1e293b', fontWeight: 600 }}>{v}</span>
                 </div>
               ))}
 
               <div style={{ marginTop: 8 }}>
                 <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8', marginBottom: 6 }}>Block Hash</div>
-                <div className="block-hash" style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8, fontSize: '0.65rem' }}>
+                <div className="block-hash" style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: 8, fontSize: '0.65rem' }}>
                   {selected.hash}
                 </div>
               </div>
 
               <div>
                 <div style={{ fontSize: '0.72rem', fontWeight: 600, color: '#94a3b8', marginBottom: 6 }}>Previous Hash</div>
-                <div className="block-hash" style={{ background: 'rgba(255,255,255,0.03)', padding: '8px 12px', borderRadius: 8, fontSize: '0.65rem' }}>
+                <div className="block-hash" style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: 8, fontSize: '0.65rem' }}>
                   {selected.prevHash}
                 </div>
               </div>
