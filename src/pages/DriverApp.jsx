@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useSensorStream } from '../hooks/useSensorStream';
+import { useSimulation } from '../context/SimulationContext';
 import { getTempColor, formatTemp } from '../utils/helpers';
 import { nodes, getNodeById } from '../data/mockNodes';
 import {
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 export default function DriverApp() {
-  const { vehicles } = useSensorStream();
+  const { vehicles } = useSimulation();
   const driver = vehicles[0]; // Current driver's vehicle
   const temp = driver?.currentTemp || driver?.baseTemp || 4.5;
   const color = getTempColor(temp);

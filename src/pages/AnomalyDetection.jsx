@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
-import { generateHistoricalAlerts, severityColors } from '../data/mockAlerts';
+import { severityColors } from '../data/mockAlerts';
+import { useSimulation } from '../context/SimulationContext';
 import { timeAgo, formatDate } from '../utils/helpers';
+import AIAssistant from '../components/AIAssistant';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip,
   BarChart, Bar, Cell, PieChart, Pie
@@ -8,7 +10,7 @@ import {
 import { AlertTriangle, CheckCircle, Clock, Filter, Search } from 'lucide-react';
 
 export default function AnomalyDetection() {
-  const [alerts] = useState(() => generateHistoricalAlerts(120));
+  const { alerts, resolveAlert } = useSimulation();
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -60,7 +62,7 @@ export default function AnomalyDetection() {
     <div className="dashboard-grid">
       <div className="page-header">
         <h2>Anomaly Detection</h2>
-        <p>AI-powered anomaly detection with LSTM predictive models & static thresholds</p>
+        <p>AI-powered anomaly detection with trend-based early warning & static thresholds</p>
       </div>
 
       {/* Stats */}
@@ -194,7 +196,14 @@ export default function AnomalyDetection() {
                     {a.resolved ? (
                       <span className="badge badge-success"><CheckCircle size={10} /> Resolved</span>
                     ) : (
-                      <span className="badge badge-danger">Active</span>
+                      <button 
+                        className="badge badge-danger" 
+                        style={{ cursor: 'pointer', border: 'none', background: '#fef2f2', color: '#ef4444' }}
+                        onClick={() => resolveAlert(a.id)}
+                        title="Click to resolve"
+                      >
+                        Active (Resolve)
+                      </button>
                     )}
                   </td>
                 </tr>
@@ -203,6 +212,9 @@ export default function AnomalyDetection() {
           </table>
         </div>
       </div>
+
+      {/* AI Assistant Panel */}
+      <AIAssistant activeAlerts={alerts.filter(a => !a.resolved)} />
     </div>
   );
 }

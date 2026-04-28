@@ -1,8 +1,9 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Activity, Route, Truck, AlertTriangle,
-  Shield, Smartphone, Map, ChevronRight
+  Shield, Smartphone, Map
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const navGroups = [
   {
@@ -42,6 +43,7 @@ const navGroups = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const { canAccess } = useAuth();
 
   return (
     <aside className="sidebar">
@@ -54,28 +56,33 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav">
-        {navGroups.map(group => (
-          <div key={group.label}>
-            <div className="sidebar-section-label">{group.label}</div>
-            {group.items.map(item => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.to;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={`sidebar-link ${isActive ? 'active' : ''}`}
-                >
-                  <Icon className="sidebar-link-icon" size={18} />
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="sidebar-badge">{item.badge}</span>
-                  )}
-                </NavLink>
-              );
-            })}
-          </div>
-        ))}
+        {navGroups.map(group => {
+          const accessibleItems = group.items.filter(item => canAccess(item.to));
+          if (accessibleItems.length === 0) return null;
+
+          return (
+            <div key={group.label}>
+              <div className="sidebar-section-label">{group.label}</div>
+              {accessibleItems.map(item => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.to;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={`sidebar-link ${isActive ? 'active' : ''}`}
+                  >
+                    <Icon className="sidebar-link-icon" size={18} />
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="sidebar-badge">{item.badge}</span>
+                    )}
+                  </NavLink>
+                );
+              })}
+            </div>
+          );
+        })}
       </nav>
 
       <div className="sidebar-footer">

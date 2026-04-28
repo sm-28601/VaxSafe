@@ -6,29 +6,36 @@ export function useReliabilityScore(entity) {
   return useMemo(() => {
     if (!entity) return { score: 0, dimensions: [], grade: 'F' };
 
-    // Simulate dimension scores based on entity properties
+    // Real logic based on entity state
     const baseReliability = entity.reliability || 0.85;
+    const temp = entity.currentTemp !== undefined ? entity.currentTemp : 5.0;
+    const isCritical = entity.status === 'critical';
+    const isWarning = entity.status === 'warning';
     
+    // Temp penalty: max 1.0 at 5.0C. Drops off towards 2C and 8C
+    const tempDeviation = Math.abs(temp - 5.0);
+    const tempScore = Math.max(0, 1 - (tempDeviation / 5));
+
     const dimensions = RELIABILITY_DIMENSIONS.map(dim => {
       let value;
       switch (dim.key) {
         case 'temperature':
-          value = baseReliability * (0.9 + Math.random() * 0.1);
+          value = entity.currentTemp !== undefined ? tempScore : baseReliability;
           break;
         case 'timing':
-          value = baseReliability * (0.85 + Math.random() * 0.15);
+          value = isCritical ? 0.6 : isWarning ? 0.8 : baseReliability * 0.95;
           break;
         case 'equipment':
-          value = baseReliability * (0.88 + Math.random() * 0.12);
+          value = (entity.batteryLevel || 85) / 100;
           break;
         case 'connectivity':
-          value = (entity.signalStrength || 80) / 100;
+          value = (entity.signalStrength || 85) / 100;
           break;
         case 'compliance':
-          value = baseReliability * (0.92 + Math.random() * 0.08);
+          value = isCritical ? 0.5 : isWarning ? 0.75 : baseReliability * 0.98;
           break;
         case 'response':
-          value = baseReliability * (0.8 + Math.random() * 0.2);
+          value = isCritical ? 0.7 : baseReliability;
           break;
         default:
           value = baseReliability;
@@ -53,5 +60,5 @@ export function useReliabilityScore(entity) {
     else grade = 'D';
 
     return { score, dimensions, grade };
-  }, [entity]);
+  }, [entity, entity?.currentTemp, entity?.status, entity?.batteryLevel, entity?.signalStrength]);
 }

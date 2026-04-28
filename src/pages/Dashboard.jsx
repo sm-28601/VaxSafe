@@ -1,42 +1,66 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Thermometer, Truck, Route, AlertTriangle, Shield, Zap, Clock, DollarSign } from 'lucide-react';
+import { Thermometer, Truck, Route, AlertTriangle, Shield, Zap, Clock, DollarSign, Download, FileText } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import SensorChart from '../components/SensorChart';
 import ReliabilityRadar from '../components/ReliabilityRadar';
 import AnomalyTimeline from '../components/AnomalyTimeline';
 import PhaseProgress from '../components/PhaseProgress';
-import { useSensorStream } from '../hooks/useSensorStream';
+import HistoricalPlayback from '../components/HistoricalPlayback';
+import { useSimulation } from '../context/SimulationContext';
 import { useReliabilityScore } from '../hooks/useReliabilityScore';
-import { generateHistoricalAlerts, generateKPIs } from '../data/mockAlerts';
-import { routes } from '../data/mockRoutes';
 import { formatNumber, formatCurrency, formatDuration } from '../utils/helpers';
+import { exportToCSV, exportToPDF } from '../utils/exportUtils';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
 
 export default function Dashboard() {
-  const { vehicles } = useSensorStream();
-  const [alerts] = useState(() => generateHistoricalAlerts(50));
-  const [kpis, setKpis] = useState(() => generateKPIs());
+  const { vehicles, alerts, kpis, routes, history } = useSimulation();
+  const [playbackTime, setPlaybackTime] = useState(24); // 24 = live
+  const isLive = playbackTime >= 24;
 
-  // Refresh KPIs periodically
-  useEffect(() => {
-    const t = setInterval(() => setKpis(generateKPIs()), 10000);
-    return () => clearInterval(t);
-  }, []);
+  const handleExportCSV = () => {
+    const data = vehicles.map(v => ({
+      Vehicle: v.name, Temperature: v.currentTemp?.toFixed(1), Route: v.route,
+      Status: v.status, Battery: v.battery + '%', Progress: v.progress?.toFixed(0) + '%',
+      LastUpdate: v.lastUpdate,
+    }));
+    exportToCSV(data, 'vaxsafe_fleet_snapshot');
+  };
 
-  // Build chart data from vehicles
+  const handleExportPDF = () => {
+    exportToPDF('Dashboard Report', [
+      { heading: 'Fleet Overview', type: 'table',
+        headers: ['Vehicle', 'Temp (°C)', 'Route', 'Status', 'Battery'],
+        rows: vehicles.slice(0, 10).map(v => [v.name, v.currentTemp?.toFixed(1), v.route, v.status, v.battery + '%']),
+      },
+      { heading: 'Key Performance Indicators', type: 'table',
+        headers: ['Metric', 'Value'],
+        rows: [['Active Routes', kpis.activeRoutes], ['Excursions Today', kpis.excursionsToday],
+          ['Fleet Reliability', (kpis.fleetReliability * 100).toFixed(0) + '%'],
+          ['On-Time Rate', kpis.onTimeRate + '%'], ['Vaccines Protected', formatNumber(kpis.vaccinesProtected)]],
+      },
+    ]);
+  };
+
+  // Build chart data from history
   const chartData = useMemo(() => {
-    const now = Date.now();
-    return Array.from({ length: 30 }, (_, i) => {
+    const data = [];
+    const topVehicles = vehicles.slice(0, 5);
+    
+    // Assumes history has ~30 points
+    for (let i = 0; i < 30; i++) {
       const entry = { time: `${30 - i}m` };
-      vehicles.slice(0, 5).forEach(v => {
-        const noise = (Math.random() - 0.5) * 0.6;
-        entry[v.name] = Math.round((v.baseTemp + noise + Math.sin(i * 0.1) * 0.3) * 10) / 10;
+      topVehicles.forEach(v => {
+        const vHist = history[v.id] || [];
+        // grab the i-th point from the end
+        const point = vHist[vHist.length - 30 + i];
+        entry[v.name] = point ? point.temp : v.currentTemp;
       });
-      return entry;
-    });
-  }, [vehicles]);
+      data.push(entry);
+    }
+    return data;
+  }, [vehicles, history]);
 
   // Route comparison data
   const routeComparison = routes.map(r => ({
@@ -52,10 +76,28 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard-grid">
-      <div className="page-header">
-        <h2>Command Center</h2>
-        <p>Real-time vaccine cold chain monitoring & intelligence</p>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h2>Command Center</h2>
+          <p>Real-time vaccine cold chain monitoring & intelligence</p>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-ghost btn-sm" onClick={handleExportCSV}>
+            <Download size={13} /> CSV
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={handleExportPDF}>
+            <FileText size={13} /> Report
+          </button>
+        </div>
       </div>
+
+      {/* Historical Playback */}
+      <HistoricalPlayback onTimeChange={setPlaybackTime} />
+      {!isLive && (
+        <div style={{ padding: '6px 14px', borderRadius: 10, background: '#eef2ff', border: '1px solid #c7d2fe', fontSize: '0.75rem', color: '#4f46e5', fontWeight: 600 }}>
+          📼 Replaying historical data — sensor readings are simulated for the selected time window
+        </div>
+      )}
 
       {/* KPI Row */}
       <div className="stats-row">

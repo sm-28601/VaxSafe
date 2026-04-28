@@ -58,7 +58,7 @@ function getAlertDetails(type) {
     sensor_offline: 'IoT sensor stopped transmitting data. Last known reading within normal range.',
     battery_low: 'Sensor battery below 15%. Schedule replacement at next transit point.',
     door_open: 'Cold storage door opened for extended period (>5 min). Temperature may be affected.',
-    reroute_triggered: 'RL agent triggered automatic reroute due to predicted temperature excursion on original path.',
+    reroute_triggered: 'Risk-weighted graph algorithm triggered automatic reroute due to predicted temperature excursion on original path.',
     delivery_delayed: 'Estimated delivery time exceeded by >30 minutes. Downstream facilities notified.',
     equipment_failure: 'Refrigeration unit malfunction detected. Backup cooling activated.',
     spoilage_risk: 'ML model predicts >60% probability of vaccine spoilage if current conditions persist.',

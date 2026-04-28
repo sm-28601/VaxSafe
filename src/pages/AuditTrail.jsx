@@ -1,40 +1,33 @@
-import { useState, useMemo } from 'react';
-import { Shield, Hash, Clock, FileText, ExternalLink, CheckCircle, Copy } from 'lucide-react';
-
-// Generate mock blockchain records
-function generateBlocks(count = 25) {
-  const actions = [
-    'Temperature Recorded', 'Route Started', 'Delivery Confirmed', 'Reroute Triggered',
-    'Sensor Calibrated', 'Cold Storage Opened', 'Vaccine Batch Verified', 'Equipment Inspection',
-    'Excursion Flagged', 'Chain of Custody Transfer',
-  ];
-  const vehicles = Array.from({ length: 10 }, (_, i) => `VX-${String(i + 1).padStart(3, '0')}`);
-  const now = Date.now();
-
-  return Array.from({ length: count }, (_, i) => {
-    const ts = new Date(now - i * 900000); // every 15 min
-    const hash = Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    const prevHash = i < count - 1 ? Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('') : '0'.repeat(64);
-    return {
-      id: count - i,
-      hash,
-      prevHash,
-      timestamp: ts.toISOString(),
-      action: actions[Math.floor(Math.random() * actions.length)],
-      vehicle: vehicles[Math.floor(Math.random() * vehicles.length)],
-      data: {
-        temp: (2 + Math.random() * 6).toFixed(1),
-        lat: (-1.2 + Math.random() * 2).toFixed(4),
-        lng: (35 + Math.random() * 5).toFixed(4),
-      },
-      verified: Math.random() > 0.05,
-      nonce: Math.floor(Math.random() * 100000),
-    };
-  });
-}
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { Shield, Hash, Clock, FileText, ExternalLink, CheckCircle, Copy, Download } from 'lucide-react';
+import { exportToCSV, exportToPDF } from '../utils/exportUtils';
+import { useSimulation } from '../context/SimulationContext';
+import { generateBlock } from '../utils/auditLogger';
 
 export default function AuditTrail() {
-  const [blocks] = useState(() => generateBlocks(30));
+  const { auditEvents } = useSimulation();
+  const [blocks, setBlocks] = useState([]);
+  const [previousHash, setPreviousHash] = useState('0'.repeat(64));
+  const processedEvents = useRef(new Set());
+
+  useEffect(() => {
+    // Process new audit events sequentially
+    const processEvents = async () => {
+      let currentHash = previousHash;
+      for (const event of auditEvents) {
+        // We use a simple hash of the event object as a unique identifier for processing
+        const eventId = JSON.stringify(event) + event.timestamp;
+        if (!processedEvents.current.has(eventId)) {
+          const newBlock = await generateBlock(currentHash, event);
+          setBlocks(prev => [newBlock, ...prev]);
+          currentHash = newBlock.hash;
+          processedEvents.current.add(eventId);
+          setPreviousHash(currentHash);
+        }
+      }
+    };
+    processEvents();
+  }, [auditEvents, previousHash]);
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [copiedHash, setCopiedHash] = useState(null);
 
@@ -48,9 +41,21 @@ export default function AuditTrail() {
 
   return (
     <div className="dashboard-grid">
-      <div className="page-header">
-        <h2>Audit Trail</h2>
-        <p>Immutable blockchain-verified chain of custody records (Hyperledger)</p>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h2>Audit Trail</h2>
+          <p>Immutable audit log with real SHA-256 verification</p>
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={() => {
+          const data = blocks.map(b => ({
+            Block: b.id, Action: b.data.action, Vehicle: b.data.vehicle,
+            Details: JSON.stringify(b.data.data), Timestamp: new Date(b.timestamp).toISOString(),
+            Hash: b.hash, Verified: b.verified ? 'Yes' : 'No',
+          }));
+          exportToCSV(data, 'vaxsafe_audit_trail');
+        }}>
+          <Download size={13} /> Export Log
+        </button>
       </div>
 
       {/* Stats */}
@@ -100,8 +105,8 @@ export default function AuditTrail() {
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1e293b' }}>{block.action}</span>
-                    <span className="badge badge-neutral">{block.vehicle}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1e293b' }}>{block.data.action}</span>
+                    <span className="badge badge-neutral">{block.data.vehicle}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span className="block-hash">{block.hash.slice(0, 16)}...{block.hash.slice(-8)}</span>
@@ -130,13 +135,10 @@ export default function AuditTrail() {
             </div>
             <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
-                ['Action', selected.action],
-                ['Vehicle', selected.vehicle],
+                ['Action', selected.data.action],
+                ['Vehicle', selected.data.vehicle],
                 ['Timestamp', new Date(selected.timestamp).toLocaleString()],
-                ['Nonce', selected.nonce],
-                ['Temperature', `${selected.data.temp}°C`],
-                ['Latitude', selected.data.lat],
-                ['Longitude', selected.data.lng],
+                ['Details', JSON.stringify(selected.data.data)],
               ].map(([k, v]) => (
                 <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #f1f5f9', fontSize: '0.82rem' }}>
                   <span style={{ color: '#94a3b8' }}>{k}</span>
@@ -158,7 +160,19 @@ export default function AuditTrail() {
                 </div>
               </div>
 
-              <button className="btn btn-primary" style={{ marginTop: 8 }}>
+              <button className="btn btn-primary" style={{ marginTop: 8 }} onClick={() => {
+                exportToPDF(`Block #${selected.id} Certificate`, [
+                  { heading: 'Block Details', type: 'table',
+                    headers: ['Field', 'Value'],
+                    rows: [['Action', selected.data.action], ['Vehicle', selected.data.vehicle],
+                      ['Timestamp', new Date(selected.timestamp).toLocaleString()],
+                      ['Details', JSON.stringify(selected.data.data)],
+                      ['Verified', selected.verified ? 'Yes' : 'No']],
+                  },
+                  { heading: 'Block Hash', type: 'text', content: selected.hash },
+                  { heading: 'Previous Hash', type: 'text', content: selected.prevHash },
+                ]);
+              }}>
                 <FileText size={14} /> Export Certificate
               </button>
             </div>

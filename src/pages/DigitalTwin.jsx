@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
-import { nodes, nodeTypes } from '../data/mockNodes';
-import { routes } from '../data/mockRoutes';
+import { nodeTypes } from '../data/mockNodes';
+import { useSimulation } from '../context/SimulationContext';
 import { Play, Pause, FastForward, Zap, Info } from 'lucide-react';
 import TempGauge from '../components/TempGauge';
 
 export default function DigitalTwin() {
+  const { nodes, routes } = useSimulation();
   const [selectedNode, setSelectedNode] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [speed, setSpeed] = useState(1);
@@ -23,7 +24,7 @@ export default function DigitalTwin() {
       x: padX + ((n.lng - minLng) / (maxLng - minLng)) * (W - 2 * padX),
       y: padY + ((maxLat - n.lat) / (maxLat - minLat)) * (H - 2 * padY),
     }));
-  }, []);
+  }, [nodes]);
 
   // Build edges from routes
   const edges = useMemo(() => {
@@ -38,7 +39,7 @@ export default function DigitalTwin() {
       }
     });
     return edgeList;
-  }, [canvasNodes]);
+  }, [canvasNodes, routes]);
 
   const selected = selectedNode ? canvasNodes.find(n => n.id === selectedNode) : null;
 
@@ -129,7 +130,7 @@ export default function DigitalTwin() {
                   className="twin-node-circle"
                   style={{
                     borderColor: isSelected ? '#fff' : typeInfo.color,
-                    background: isSelected ? typeInfo.color : '#ffffff',
+                    background: isSelected ? typeInfo.color : n.status === 'critical' ? '#ef4444' : n.status === 'warning' ? '#f59e0b' : '#ffffff',
                     boxShadow: isSelected ? `0 0 20px ${typeInfo.color}50` : 'none',
                     transform: isSelected ? 'scale(1.2)' : 'scale(1)',
                   }}

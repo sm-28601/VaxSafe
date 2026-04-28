@@ -13,6 +13,7 @@
     "vite": "^8.0.10"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.11.0",
     "react-leaflet": "^5.0.0",

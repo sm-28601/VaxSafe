@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
-import { routes, routeStatusColors } from '../data/mockRoutes';
-import { nodes, getNodeById } from '../data/mockNodes';
+import { routeStatusColors } from '../data/mockRoutes';
+import { useSimulation } from '../context/SimulationContext';
+import { findOptimalRoute } from '../utils/graphRouter';
 import { formatDuration, getTempColor } from '../utils/helpers';
-import { Navigation, Zap, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Navigation, Zap, Clock, AlertTriangle, CheckCircle, RotateCcw, XCircle } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -25,17 +26,38 @@ function createDotIcon(color) {
 }
 
 export default function RouteOptimizer() {
-  const [selectedRoute, setSelectedRoute] = useState(routes[0]);
+  const { routes, overrideRoute, nodes } = useSimulation();
+  const [selectedRouteId, setSelectedRouteId] = useState(routes[0]?.id);
+  const selectedRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
   const [showOptimized, setShowOptimized] = useState(true);
+  const [overrideMsg, setOverrideMsg] = useState(null);
+
+  const triggerOverride = (action) => {
+    const msgs = {
+      reroute: '✅ Manual reroute triggered — risk-weighted graph algorithm bypassed. New route calculated in 1.8s.',
+      ignore: '⚠️ AI suggestion dismissed — driver is following legacy route. Monitoring continues.',
+    };
+    if (action === 'reroute' && selectedRoute) {
+      overrideRoute(selectedRoute.id);
+    }
+    setOverrideMsg(msgs[action]);
+    setTimeout(() => setOverrideMsg(null), 5000);
+  };
 
   const optimizedWaypoints = useMemo(() => {
-    if (!selectedRoute) return [];
-    // Simulate optimized route (slightly different path)
-    return selectedRoute.waypoints.map(([lat, lng], i) => {
-      const offset = (i % 2 === 0 ? 1 : -1) * 0.15;
-      return [lat + offset * 0.3, lng + offset * 0.2];
-    });
-  }, [selectedRoute]);
+    if (!selectedRoute || !selectedRoute.nodes || selectedRoute.nodes.length === 0) return [];
+    
+    const startNodeId = selectedRoute.nodes[0];
+    const endNodeId = selectedRoute.nodes[selectedRoute.nodes.length - 1];
+    
+    const optimalNodeIds = findOptimalRoute(startNodeId, endNodeId, nodes, routes);
+    
+    // Convert node IDs back to coordinates
+    return optimalNodeIds.map(id => {
+      const node = nodes.find(n => n.id === id);
+      return node ? [node.lat, node.lng] : null;
+    }).filter(coord => coord !== null);
+  }, [selectedRoute, nodes, routes]);
 
   const savings = selectedRoute ? {
     distance: Math.round(selectedRoute.distance * 0.18),
@@ -48,7 +70,34 @@ export default function RouteOptimizer() {
     <div className="dashboard-grid">
       <div className="page-header">
         <h2>Route Optimizer</h2>
-        <p>RL-powered routing with time-temperature constraints (CVRVD)</p>
+        <p>Risk-weighted graph algorithm routing with time-temperature constraints (CVRVD)</p>
+      </div>
+
+      {/* Override Toast */}
+      {overrideMsg && (
+        <div className="animate-in" style={{
+          padding: '10px 16px', borderRadius: 12,
+          background: overrideMsg.startsWith('✅') ? '#f0fdf4' : '#fffbeb',
+          border: `1px solid ${overrideMsg.startsWith('✅') ? '#bbf7d0' : '#fed7aa'}`,
+          fontSize: '0.82rem', fontWeight: 600,
+          color: overrideMsg.startsWith('✅') ? '#166534' : '#92400e',
+        }}>
+          {overrideMsg}
+        </div>
+      )}
+
+      {/* Manual Override Controls */}
+      <div className="glass-card" style={{ padding: '12px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569' }}>Human-in-the-Loop</span>
+          <div style={{ flex: 1 }} />
+          <button className="btn btn-ghost btn-sm" onClick={() => triggerOverride('reroute')} style={{ color: '#4f46e5' }}>
+            <RotateCcw size={13} /> Force Reroute
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={() => triggerOverride('ignore')} style={{ color: '#d97706' }}>
+            <XCircle size={13} /> Ignore AI Suggestion
+          </button>
+        </div>
       </div>
 
       <div className="grid-2-1">
@@ -103,7 +152,7 @@ export default function RouteOptimizer() {
 
               {/* Node markers */}
               {selectedRoute?.nodes.map(nodeId => {
-                const node = getNodeById(nodeId);
+                const node = nodes.find(n => n.id === nodeId);
                 if (!node) return null;
                 return (
                   <Marker
@@ -136,7 +185,7 @@ export default function RouteOptimizer() {
               {routes.map(r => (
                 <div
                   key={r.id}
-                  onClick={() => setSelectedRoute(r)}
+                  onClick={() => setSelectedRouteId(r.id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',

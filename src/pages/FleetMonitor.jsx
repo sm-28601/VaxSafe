@@ -1,15 +1,16 @@
 import { useState, useMemo } from 'react';
-import { useSensorStream } from '../hooks/useSensorStream';
+import { useSimulation } from '../context/SimulationContext';
 import { getTempColor, getTempStatus, formatTemp, timeAgo } from '../utils/helpers';
 import { routes } from '../data/mockRoutes';
 import TempGauge from '../components/TempGauge';
 import {
   LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine, CartesianGrid
 } from 'recharts';
-import { Truck, Thermometer, Battery, Wifi, MapPin, X } from 'lucide-react';
+import { Truck, Thermometer, Battery, Wifi, MapPin, X, Download } from 'lucide-react';
+import { exportToCSV } from '../utils/exportUtils';
 
 export default function FleetMonitor() {
-  const { vehicles } = useSensorStream();
+  const { vehicles, history } = useSimulation();
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [filter, setFilter] = useState('all');
 
@@ -26,12 +27,12 @@ export default function FleetMonitor() {
 
   // Generate temp history for selected vehicle
   const selectedHistory = useMemo(() => {
-    if (!selected) return [];
-    return Array.from({ length: 30 }, (_, i) => ({
-      time: `${30 - i}m`,
-      temp: selected.baseTemp + (Math.random() - 0.5) * 1.2 + Math.sin(i * 0.15) * 0.4,
+    if (!selected || !history[selected.id]) return [];
+    return history[selected.id].map((point, i) => ({
+      time: `${history[selected.id].length - i}s`,
+      temp: point.temp,
     }));
-  }, [selected]);
+  }, [selected, history]);
 
   const statusCounts = {
     all: vehicles.length,
@@ -42,9 +43,22 @@ export default function FleetMonitor() {
 
   return (
     <div className="dashboard-grid">
-      <div className="page-header">
-        <h2>Fleet Monitor</h2>
-        <p>Real-time tracking of all vehicles in the cold chain network</p>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h2>Fleet Monitor</h2>
+          <p>Real-time tracking of all vehicles in the cold chain network</p>
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={() => {
+          const data = vehicles.map(v => ({
+            Vehicle: v.name, Driver: v.driver, Route: v.route,
+            Temperature: v.currentTemp?.toFixed(1) + '°C', Status: v.status,
+            Battery: v.battery + '%', Signal: v.signal + '%',
+            Progress: v.progress?.toFixed(0) + '%',
+          }));
+          exportToCSV(data, 'vaxsafe_fleet_report');
+        }}>
+          <Download size={13} /> Export CSV
+        </button>
       </div>
 
       {/* Filter tabs */}
